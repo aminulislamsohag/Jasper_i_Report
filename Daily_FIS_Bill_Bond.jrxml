@@ -25,7 +25,7 @@
         ST.DEAL_FLOW,
         DL.YIELD_LCY,
         D.DEAL_FACE_VALUE,
-        DA.TXN_PROFIT,
+        DL.DEAL_LEG_PRICE*DA.ALLOC_QTY  PRINCIPAL,
         DL.ACCRUED_INT,
         ST.SETTLEMENT_AMT,
         DA.PORTFOLIO_CODE,
@@ -53,7 +53,7 @@
 	<field name="DEAL_FLOW" class="java.lang.String"/>
 	<field name="YIELD_LCY" class="java.math.BigDecimal"/>
 	<field name="DEAL_FACE_VALUE" class="java.math.BigDecimal"/>
-	<field name="TXN_PROFIT" class="java.math.BigDecimal"/>
+	<field name="PRINCIPAL" class="java.math.BigDecimal"/>
 	<field name="ACCRUED_INT" class="java.math.BigDecimal"/>
 	<field name="SETTLEMENT_AMT" class="java.math.BigDecimal"/>
 	<field name="PORTFOLIO_CODE" class="java.lang.String"/>
@@ -88,9 +88,15 @@
 	<variable name="sumtotlacint" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{ACCRUED_INT}]]></variableExpression>
 	</variable>
-	<variable name="sumprinamtstrg" class="java.math.BigDecimal" resetType="Group" resetGroup="STRATEG_CODE" calculation="Sum"/>
-	<variable name="sumprnamtport" class="java.math.BigDecimal" resetType="Group" resetGroup="PORFI_CODE" calculation="Sum"/>
-	<variable name="sumprnamttot" class="java.math.BigDecimal" calculation="Sum"/>
+	<variable name="sumprinamtstrg" class="java.math.BigDecimal" resetType="Group" resetGroup="STRATEG_CODE" calculation="Sum">
+		<variableExpression><![CDATA[$F{PRINCIPAL}]]></variableExpression>
+	</variable>
+	<variable name="sumprnamtport" class="java.math.BigDecimal" resetType="Group" resetGroup="PORFI_CODE" calculation="Sum">
+		<variableExpression><![CDATA[$F{PRINCIPAL}]]></variableExpression>
+	</variable>
+	<variable name="sumprnamttot" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{PRINCIPAL}]]></variableExpression>
+	</variable>
 	<group name="PORFI_CODE">
 		<groupExpression><![CDATA[$F{PORTFOLIO_CODE}]]></groupExpression>
 		<groupHeader>
@@ -478,7 +484,7 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$F{TXN_PROFIT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{PRINCIPAL}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
 				<reportElement x="846" y="0" width="128" height="20" uuid="59b12522-1d45-4376-8764-094a8119dd9f"/>
