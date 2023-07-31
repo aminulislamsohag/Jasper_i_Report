@@ -1,0 +1,503 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Daily_FIS_Bill_Bond" pageWidth="1033" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="973" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="a037d77b-b8a3-4406-8bf8-81f73cc45dec">
+	<property name="ireport.scriptlethandling" value="2"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="BRANCH" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="ADDR1" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="ADDR2" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="UserId" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="SONALILogo" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="HeaderParam" class="java.util.Map" isForPrompting="false"/>
+	<parameter name="FROM_DATE" class="java.lang.String"/>
+	<parameter name="Query" class="java.lang.String" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[SELECT D.DEAL_ID,
+        D.SECURITY_CODE,
+        S.ISSUE_DT,
+        S.MATURITY_DT,
+        DL.VALUE_DATE,
+        ST.DEAL_FLOW,
+        DL.YIELD_LCY,
+        D.DEAL_FACE_VALUE,
+        DA.TXN_PROFIT,
+        DL.ACCRUED_INT,
+        ST.SETTLEMENT_AMT,
+        DA.PORTFOLIO_CODE,
+        DA.STRATEGY_CODE
+   FROM TB_FIS_DEAL       D,
+        TB_FIS_SECURITY   S,
+        TB_FIS_DEAL_LEG   DL,
+        TB_FIS_SETTLEMENT ST,
+        TB_FIS_DEAL_ALLOC DA
+
+  WHERE TO_DATE(D.TRADE_DT) = $P{FROM_DATE}
+    AND D.BO_CHECKER_ID IS NOT NULL
+    AND D.SECURITY_CODE = S.SECURITY_CODE
+    AND DL.DEAL_ID = D.DEAL_ID
+    AND ST.DEAL_ID = D.DEAL_ID
+    AND DA.DEAL_ID = D.DEAL_ID
+    AND DA.STRATEGY_CODE IN ('HFT','HTM','OTHERS')
+    ORDER BY DA.PORTFOLIO_CODE, DA.STRATEGY_CODE, D.DEAL_ID ASC]]>
+	</queryString>
+	<field name="DEAL_ID" class="java.lang.String"/>
+	<field name="SECURITY_CODE" class="java.lang.String"/>
+	<field name="ISSUE_DT" class="java.sql.Timestamp"/>
+	<field name="MATURITY_DT" class="java.sql.Timestamp"/>
+	<field name="VALUE_DATE" class="java.sql.Timestamp"/>
+	<field name="DEAL_FLOW" class="java.lang.String"/>
+	<field name="YIELD_LCY" class="java.math.BigDecimal"/>
+	<field name="DEAL_FACE_VALUE" class="java.math.BigDecimal"/>
+	<field name="TXN_PROFIT" class="java.math.BigDecimal"/>
+	<field name="ACCRUED_INT" class="java.math.BigDecimal"/>
+	<field name="SETTLEMENT_AMT" class="java.math.BigDecimal"/>
+	<field name="PORTFOLIO_CODE" class="java.lang.String"/>
+	<field name="STRATEGY_CODE" class="java.lang.String"/>
+	<variable name="sum" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{SETTLEMENT_AMT}]]></variableExpression>
+	</variable>
+	<variable name="sum2" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{DEAL_FACE_VALUE}]]></variableExpression>
+	</variable>
+	<variable name="SUMGF" class="java.math.BigDecimal" resetType="Group" resetGroup="STRATEG_CODE" calculation="Sum">
+		<variableExpression><![CDATA[$F{DEAL_FACE_VALUE}]]></variableExpression>
+	</variable>
+	<variable name="SUMGS" class="java.math.BigDecimal" resetType="Group" resetGroup="STRATEG_CODE" calculation="Sum">
+		<variableExpression><![CDATA[$F{SETTLEMENT_AMT}]]></variableExpression>
+	</variable>
+	<variable name="SerialNumber" class="java.lang.Integer" resetType="Group" resetGroup="PORFI_CODE" incrementType="Report">
+		<variableExpression><![CDATA[$V{PORFI_CODE_COUNT}]]></variableExpression>
+	</variable>
+	<variable name="sumsubfacvlu" class="java.math.BigDecimal" resetType="Group" resetGroup="PORFI_CODE" calculation="Sum">
+		<variableExpression><![CDATA[$F{DEAL_FACE_VALUE}]]></variableExpression>
+	</variable>
+	<variable name="sumsubstamt" class="java.math.BigDecimal" resetType="Group" resetGroup="PORFI_CODE" calculation="Sum">
+		<variableExpression><![CDATA[$F{SETTLEMENT_AMT}]]></variableExpression>
+	</variable>
+	<group name="PORFI_CODE">
+		<groupExpression><![CDATA[$F{PORTFOLIO_CODE}]]></groupExpression>
+		<groupHeader>
+			<band height="21">
+				<textField>
+					<reportElement x="0" y="3" width="180" height="18" uuid="33bd8329-3869-431e-8f4f-fc1c29d48021"/>
+					<textElement verticalAlignment="Middle">
+						<font size="12"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Portfolio :  " +$F{PORTFOLIO_CODE}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="20">
+				<rectangle>
+					<reportElement x="0" y="0" width="973" height="20" uuid="a48f20ff-fbc6-4365-8396-53df7a9cd5c5"/>
+				</rectangle>
+				<staticText>
+					<reportElement x="0" y="0" width="559" height="20" uuid="f99ecf8f-5ba6-492a-8858-9373684cc5d2"/>
+					<box rightPadding="2">
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Sub Total :]]></text>
+				</staticText>
+				<textField pattern="#,##0.00;(-#,##0.00)">
+					<reportElement x="559" y="0" width="95" height="20" uuid="aec77cd0-3139-4646-ae74-af39c9027242"/>
+					<box rightPadding="2">
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right"/>
+				</textField>
+				<textField pattern="#,##0.00;(-#,##0.00)">
+					<reportElement x="654" y="0" width="107" height="20" uuid="df29ba91-a85b-4ad4-bf7e-9d936bd7af3d"/>
+					<box rightPadding="2">
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$V{sumsubfacvlu}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00;(-#,##0.00)">
+					<reportElement x="762" y="0" width="212" height="20" uuid="8dbb3ffb-0153-4fec-ae7f-51cca3d23a96"/>
+					<box rightPadding="2">
+						<leftPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$V{sumsubstamt}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="STRATEG_CODE">
+		<groupExpression><![CDATA[$F{STRATEGY_CODE}]]></groupExpression>
+		<groupHeader>
+			<band height="45">
+				<rectangle>
+					<reportElement x="0" y="15" width="973" height="30" uuid="99a34822-476e-42af-80c5-e6f0c6588993"/>
+				</rectangle>
+				<textField>
+					<reportElement x="57" y="0" width="118" height="15" uuid="8fdb26e0-f3c1-47dd-a2a1-5e995c230c4d"/>
+					<textElement verticalAlignment="Top"/>
+					<textFieldExpression><![CDATA["Strategy : " + $F{STRATEGY_CODE}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="48" y="15" width="106" height="30" uuid="18844e8c-8067-4b2d-a8ce-58fffdfd3ad8"/>
+					<box leftPadding="3">
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Deal Ref. No.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="154" y="15" width="82" height="30" uuid="eec2a38f-7ff0-47e6-956a-a1f0c19cbc0b"/>
+					<box leftPadding="3">
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[ISIN]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="236" y="15" width="61" height="30" uuid="da4be32c-80a4-4236-8298-f9214d43f61b"/>
+					<box leftPadding="3">
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Issue Date]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="297" y="15" width="76" height="30" uuid="9eddb339-108f-4074-9b3e-626056e326a1"/>
+					<box leftPadding="3">
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true" isStrikeThrough="false"/>
+					</textElement>
+					<text><![CDATA[Maturity Date]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="433" y="15" width="47" height="30" uuid="43695e93-ac4c-4190-a6c0-71756221f0e0"/>
+					<box leftPadding="3">
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Buy/Sell]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="654" y="15" width="107" height="30" uuid="90a99083-d12e-49d9-aba7-cc27270e9de5"/>
+					<box leftPadding="3">
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Face Value]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="846" y="15" width="128" height="30" uuid="c20508c5-1094-48ad-bb11-7326e1becdab"/>
+					<box leftPadding="3">
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Settlement Amout]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="761" y="15" width="85" height="30" uuid="3270d033-a778-4269-8923-379abedcc4aa"/>
+					<box leftPadding="3">
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Justified" verticalAlignment="Middle">
+						<font size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Accrued Interest]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="480" y="15" width="79" height="30" uuid="3ece2f08-76c6-4cf5-9817-96fe4e1269e5"/>
+					<box leftPadding="3">
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Purchase Yield	]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="15" width="48" height="30" uuid="6c23176e-c42e-4ccc-b15c-9042d1f9b57d"/>
+					<box rightPadding="2">
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Sl. No.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="373" y="17" width="60" height="28" uuid="44a19260-4c7c-4b8a-bc41-a6428da5bf2a"/>
+					<box leftPadding="3">
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true" isStrikeThrough="false"/>
+					</textElement>
+					<text><![CDATA[Value Date]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="559" y="16" width="95" height="29" uuid="a60eb5a0-3b93-4d1d-bcfd-41287f945870"/>
+					<box leftPadding="3">
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Principal Amout]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="20">
+				<rectangle>
+					<reportElement x="480" y="0" width="493" height="20" uuid="739ea67d-935b-4518-bd89-9f8163c19fc0"/>
+				</rectangle>
+				<textField pattern="#,##0.00;(-#,##0.00)">
+					<reportElement x="761" y="0" width="212" height="20" uuid="90a0fb28-295f-4dd6-8ed5-89ecbc62f751"/>
+					<box rightPadding="2">
+						<leftPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$V{SUMGS}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="480" y="0" width="79" height="20" uuid="e46decdb-831c-42d4-ba04-26b9d90c54b3"/>
+					<box rightPadding="2">
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right"/>
+					<text><![CDATA[ Total :]]></text>
+				</staticText>
+				<textField pattern="#,##0.00;(-#,##0.00)">
+					<reportElement x="654" y="0" width="107" height="20" uuid="77d951f9-b185-474d-a724-bfe9b595738c"/>
+					<box rightPadding="2">
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$V{SUMGF}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00;(-#,##0.00)">
+					<reportElement x="559" y="0" width="95" height="20" uuid="ce8c90cf-dfe4-4846-9aa0-676f58a2fd02"/>
+					<box rightPadding="2">
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right"/>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="51" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="120" height="34" uuid="fa02efb7-fbd2-43e7-b305-9806618cfd37"/>
+				<subreportParameter name="ADDR2">
+					<subreportParameterExpression><![CDATA[]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ADDR1"/>
+				<subreportParameter name="HeaderParam">
+					<subreportParameterExpression><![CDATA[$P{HeaderParam}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="logoPath">
+					<subreportParameterExpression><![CDATA[]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="BRANCH"/>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["header_left.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="873" y="0" width="100" height="34" uuid="707f7f97-f879-456e-8f22-a0c01ec0f821"/>
+				<subreportParameter name="ADDR2">
+					<subreportParameterExpression><![CDATA[]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ADDR1"/>
+				<subreportParameter name="HeaderParam">
+					<subreportParameterExpression><![CDATA[$P{HeaderParam}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="logoPath">
+					<subreportParameterExpression><![CDATA[]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="BRANCH"/>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["header_right.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement x="353" y="16" width="268" height="20" uuid="ceba95dc-f0cd-4079-9a73-e4fd1dee6570"/>
+				<textElement textAlignment="Justified" verticalAlignment="Bottom">
+					<font size="13"/>
+				</textElement>
+				<text><![CDATA[Daily FIS Bill/Bond Buy/Sell (Outright) report]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yy">
+				<reportElement x="389" y="36" width="196" height="14" uuid="6be5dc96-e9eb-406e-840d-f68f4cdecc07"/>
+				<textElement verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA["Transaction Date : " + $P{FROM_DATE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="20">
+			<rectangle>
+				<reportElement x="0" y="0" width="973" height="20" uuid="91ccbe64-4e1f-4fb2-8d2f-3370c5286e30"/>
+			</rectangle>
+			<textField isBlankWhenNull="true">
+				<reportElement x="48" y="0" width="106" height="20" uuid="5ee8b638-5d8d-4345-aaa9-dadee83bcc3f"/>
+				<box leftPadding="2">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{DEAL_ID}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="154" y="0" width="82" height="20" uuid="8da5fab6-d6aa-402a-96b1-a82604ad300d"/>
+				<box leftPadding="2">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{SECURITY_CODE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd-MMM-yy" isBlankWhenNull="true">
+				<reportElement x="236" y="0" width="61" height="20" uuid="274647c7-ffbc-4ccf-894c-3e351b0a5ebc"/>
+				<box>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{ISSUE_DT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd-MMM-yy" isBlankWhenNull="true">
+				<reportElement x="297" y="0" width="77" height="20" uuid="18446b05-b966-4248-bd75-3a2f75a51fed"/>
+				<box>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{MATURITY_DT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="433" y="0" width="47" height="20" uuid="2cdc959e-432d-4dde-98fe-b8772d36af5c"/>
+				<box>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{DEAL_FLOW}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="654" y="0" width="107" height="20" uuid="48bda1f3-1bae-4804-95d0-c4701928b56b"/>
+				<box rightPadding="2">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DEAL_FACE_VALUE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="761" y="0" width="85" height="20" uuid="b9053f07-51b3-4a7b-9a87-e686554e49fc"/>
+				<box rightPadding="2">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{ACCRUED_INT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00;(-###0.00)" isBlankWhenNull="true">
+				<reportElement x="480" y="0" width="79" height="20" uuid="e0986ece-f560-4f82-850b-8c5d51d8cd82"/>
+				<box rightPadding="2">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{YIELD_LCY} + "%"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="48" height="20" uuid="679e46e7-0800-4832-bcef-92dd05287233"/>
+				<box leftPadding="2">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$V{SerialNumber}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd-MMM-yy" isBlankWhenNull="true">
+				<reportElement x="374" y="0" width="59" height="20" uuid="8e41b736-fc4c-4b17-a6e0-67d240c609d7"/>
+				<box>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{VALUE_DATE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="559" y="0" width="95" height="20" uuid="9a076b0f-1183-4d71-aca5-0f524b0fd123"/>
+				<box rightPadding="2">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{TXN_PROFIT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="846" y="0" width="128" height="20" uuid="59b12522-1d45-4376-8764-094a8119dd9f"/>
+				<box rightPadding="2">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{SETTLEMENT_AMT}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="20">
+			<rectangle>
+				<reportElement x="0" y="0" width="973" height="20" uuid="669d3d4c-07f9-4223-b48f-60bacca13628"/>
+			</rectangle>
+			<textField pattern="#,##0.00;(-#,##0.00)">
+				<reportElement x="761" y="0" width="212" height="20" uuid="77305f07-14f1-4169-9aab-c08bd1a39939"/>
+				<box rightPadding="2">
+					<leftPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{sum}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="559" height="20" uuid="c3e7f28d-e345-411e-9258-f4d9845e395f"/>
+				<box rightPadding="2">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Grand Total :]]></text>
+			</staticText>
+			<textField pattern="#,##0.00;(-#,##0.00)">
+				<reportElement x="654" y="0" width="107" height="20" uuid="367b11c2-0619-4a05-8248-e993bb06b088"/>
+				<box rightPadding="2">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{sum2}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(-#,##0.00)">
+				<reportElement x="559" y="0" width="95" height="20" uuid="297cd999-ef28-4d9b-be0a-203713de3390"/>
+				<box rightPadding="2">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>
