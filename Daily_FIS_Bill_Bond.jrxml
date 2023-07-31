@@ -70,8 +70,8 @@
 	<variable name="SUMGS" class="java.math.BigDecimal" resetType="Group" resetGroup="STRATEG_CODE" calculation="Sum">
 		<variableExpression><![CDATA[$F{SETTLEMENT_AMT}]]></variableExpression>
 	</variable>
-	<variable name="SerialNumber" class="java.lang.Integer" resetType="Group" resetGroup="PORFI_CODE" incrementType="Report">
-		<variableExpression><![CDATA[$V{PORFI_CODE_COUNT}]]></variableExpression>
+	<variable name="SerialNumber" class="java.lang.Integer" resetType="Group" resetGroup="STRATEG_CODE" incrementType="Report">
+		<variableExpression><![CDATA[$V{STRATEG_CODE_COUNT}]]></variableExpression>
 	</variable>
 	<variable name="sumsubfacvlu" class="java.math.BigDecimal" resetType="Group" resetGroup="PORFI_CODE" calculation="Sum">
 		<variableExpression><![CDATA[$F{DEAL_FACE_VALUE}]]></variableExpression>
@@ -79,6 +79,18 @@
 	<variable name="sumsubstamt" class="java.math.BigDecimal" resetType="Group" resetGroup="PORFI_CODE" calculation="Sum">
 		<variableExpression><![CDATA[$F{SETTLEMENT_AMT}]]></variableExpression>
 	</variable>
+	<variable name="sumacintstrg" class="java.math.BigDecimal" resetType="Group" resetGroup="STRATEG_CODE" calculation="Sum">
+		<variableExpression><![CDATA[$F{ACCRUED_INT}]]></variableExpression>
+	</variable>
+	<variable name="sumacintport" class="java.math.BigDecimal" resetType="Group" resetGroup="PORFI_CODE" calculation="Sum">
+		<variableExpression><![CDATA[$F{ACCRUED_INT}]]></variableExpression>
+	</variable>
+	<variable name="sumtotlacint" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{ACCRUED_INT}]]></variableExpression>
+	</variable>
+	<variable name="sumprinamtstrg" class="java.math.BigDecimal" resetType="Group" resetGroup="STRATEG_CODE" calculation="Sum"/>
+	<variable name="sumprnamtport" class="java.math.BigDecimal" resetType="Group" resetGroup="PORFI_CODE" calculation="Sum"/>
+	<variable name="sumprnamttot" class="java.math.BigDecimal" calculation="Sum"/>
 	<group name="PORFI_CODE">
 		<groupExpression><![CDATA[$F{PORTFOLIO_CODE}]]></groupExpression>
 		<groupHeader>
@@ -102,33 +114,42 @@
 					<box rightPadding="2">
 						<rightPen lineWidth="0.5"/>
 					</box>
-					<textElement textAlignment="Center">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
 					<text><![CDATA[Sub Total :]]></text>
 				</staticText>
-				<textField pattern="#,##0.00;(-#,##0.00)">
-					<reportElement x="559" y="0" width="95" height="20" uuid="aec77cd0-3139-4646-ae74-af39c9027242"/>
+				<textField pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
+					<reportElement x="666" y="0" width="95" height="20" uuid="aec77cd0-3139-4646-ae74-af39c9027242"/>
 					<box rightPadding="2">
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$V{sumprnamtport}]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.00;(-#,##0.00)">
-					<reportElement x="654" y="0" width="107" height="20" uuid="df29ba91-a85b-4ad4-bf7e-9d936bd7af3d"/>
+				<textField pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
+					<reportElement x="559" y="0" width="107" height="20" uuid="df29ba91-a85b-4ad4-bf7e-9d936bd7af3d"/>
 					<box rightPadding="2">
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$V{sumsubfacvlu}]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.00;(-#,##0.00)">
-					<reportElement x="762" y="0" width="212" height="20" uuid="8dbb3ffb-0153-4fec-ae7f-51cca3d23a96"/>
+				<textField pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
+					<reportElement x="846" y="0" width="128" height="20" uuid="8dbb3ffb-0153-4fec-ae7f-51cca3d23a96"/>
 					<box rightPadding="2">
 						<leftPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$V{sumsubstamt}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
+					<reportElement x="761" y="0" width="85" height="20" uuid="ddb1060f-44c3-4c6f-b421-92b776f32628"/>
+					<box rightPadding="2">
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$V{sumacintport}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -196,7 +217,7 @@
 					<text><![CDATA[Buy/Sell]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="654" y="15" width="107" height="30" uuid="90a99083-d12e-49d9-aba7-cc27270e9de5"/>
+					<reportElement x="559" y="15" width="107" height="30" uuid="90a99083-d12e-49d9-aba7-cc27270e9de5"/>
 					<box leftPadding="3">
 						<rightPen lineWidth="0.5"/>
 					</box>
@@ -256,7 +277,7 @@
 					<text><![CDATA[Value Date]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="559" y="16" width="95" height="29" uuid="a60eb5a0-3b93-4d1d-bcfd-41287f945870"/>
+					<reportElement x="666" y="16" width="95" height="29" uuid="a60eb5a0-3b93-4d1d-bcfd-41287f945870"/>
 					<box leftPadding="3">
 						<rightPen lineWidth="0.5"/>
 					</box>
@@ -272,8 +293,8 @@
 				<rectangle>
 					<reportElement x="480" y="0" width="493" height="20" uuid="739ea67d-935b-4518-bd89-9f8163c19fc0"/>
 				</rectangle>
-				<textField pattern="#,##0.00;(-#,##0.00)">
-					<reportElement x="761" y="0" width="212" height="20" uuid="90a0fb28-295f-4dd6-8ed5-89ecbc62f751"/>
+				<textField pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
+					<reportElement x="846" y="0" width="127" height="20" uuid="90a0fb28-295f-4dd6-8ed5-89ecbc62f751"/>
 					<box rightPadding="2">
 						<leftPen lineWidth="0.5"/>
 					</box>
@@ -288,20 +309,29 @@
 					<textElement textAlignment="Right"/>
 					<text><![CDATA[ Total :]]></text>
 				</staticText>
-				<textField pattern="#,##0.00;(-#,##0.00)">
-					<reportElement x="654" y="0" width="107" height="20" uuid="77d951f9-b185-474d-a724-bfe9b595738c"/>
+				<textField pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
+					<reportElement x="559" y="0" width="107" height="20" uuid="77d951f9-b185-474d-a724-bfe9b595738c"/>
 					<box rightPadding="2">
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$V{SUMGF}]]></textFieldExpression>
 				</textField>
-				<textField pattern="#,##0.00;(-#,##0.00)">
-					<reportElement x="559" y="0" width="95" height="20" uuid="ce8c90cf-dfe4-4846-9aa0-676f58a2fd02"/>
+				<textField pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
+					<reportElement x="666" y="0" width="95" height="20" uuid="ce8c90cf-dfe4-4846-9aa0-676f58a2fd02"/>
 					<box rightPadding="2">
 						<rightPen lineWidth="0.5"/>
 					</box>
 					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$V{sumprinamtstrg}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
+					<reportElement x="761" y="0" width="85" height="20" uuid="87812bba-d3cc-4b6e-996f-8951117cf0e7"/>
+					<box rightPadding="2">
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right"/>
+					<textFieldExpression><![CDATA[$V{sumacintstrg}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -351,7 +381,7 @@
 				<text><![CDATA[Daily FIS Bill/Bond Buy/Sell (Outright) report]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yy">
-				<reportElement x="389" y="36" width="196" height="14" uuid="6be5dc96-e9eb-406e-840d-f68f4cdecc07"/>
+				<reportElement x="389" y="36" width="207" height="14" uuid="6be5dc96-e9eb-406e-840d-f68f4cdecc07"/>
 				<textElement verticalAlignment="Bottom"/>
 				<textFieldExpression><![CDATA["Transaction Date : " + $P{FROM_DATE}]]></textFieldExpression>
 			</textField>
@@ -401,7 +431,7 @@
 				<textFieldExpression><![CDATA[$F{DEAL_FLOW}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
-				<reportElement x="654" y="0" width="107" height="20" uuid="48bda1f3-1bae-4804-95d0-c4701928b56b"/>
+				<reportElement x="559" y="0" width="107" height="20" uuid="48bda1f3-1bae-4804-95d0-c4701928b56b"/>
 				<box rightPadding="2">
 					<rightPen lineWidth="0.5"/>
 				</box>
@@ -443,7 +473,7 @@
 				<textFieldExpression><![CDATA[$F{VALUE_DATE}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
-				<reportElement x="559" y="0" width="95" height="20" uuid="9a076b0f-1183-4d71-aca5-0f524b0fd123"/>
+				<reportElement x="666" y="0" width="95" height="20" uuid="9a076b0f-1183-4d71-aca5-0f524b0fd123"/>
 				<box rightPadding="2">
 					<rightPen lineWidth="0.5"/>
 				</box>
@@ -465,8 +495,8 @@
 			<rectangle>
 				<reportElement x="0" y="0" width="973" height="20" uuid="669d3d4c-07f9-4223-b48f-60bacca13628"/>
 			</rectangle>
-			<textField pattern="#,##0.00;(-#,##0.00)">
-				<reportElement x="761" y="0" width="212" height="20" uuid="77305f07-14f1-4169-9aab-c08bd1a39939"/>
+			<textField pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="846" y="0" width="127" height="20" uuid="77305f07-14f1-4169-9aab-c08bd1a39939"/>
 				<box rightPadding="2">
 					<leftPen lineWidth="0.5"/>
 				</box>
@@ -478,25 +508,34 @@
 				<box rightPadding="2">
 					<rightPen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Grand Total :]]></text>
 			</staticText>
-			<textField pattern="#,##0.00;(-#,##0.00)">
-				<reportElement x="654" y="0" width="107" height="20" uuid="367b11c2-0619-4a05-8248-e993bb06b088"/>
+			<textField pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="559" y="0" width="107" height="20" uuid="367b11c2-0619-4a05-8248-e993bb06b088"/>
 				<box rightPadding="2">
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA[$V{sum2}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00;(-#,##0.00)">
-				<reportElement x="559" y="0" width="95" height="20" uuid="297cd999-ef28-4d9b-be0a-203713de3390"/>
+			<textField pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="666" y="0" width="95" height="20" uuid="297cd999-ef28-4d9b-be0a-203713de3390"/>
 				<box rightPadding="2">
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{sumprnamttot}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(-#,##0.00)" isBlankWhenNull="true">
+				<reportElement x="761" y="0" width="85" height="20" uuid="1a771445-2f16-428f-aa95-fa09f6cea442"/>
+				<box rightPadding="2">
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{sumtotlacint}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>
