@@ -43,6 +43,7 @@
     AND ST.DEAL_ID = D.DEAL_ID
     AND DA.DEAL_ID = D.DEAL_ID
     AND DA.STRATEGY_CODE IN ('HFT','HTM','OTHERS')
+    AND D.DEAL_TYPE = 'OUTRIGHT'
     ORDER BY DA.PORTFOLIO_CODE, DA.STRATEGY_CODE, D.DEAL_ID ASC]]>
 	</queryString>
 	<field name="DEAL_ID" class="java.lang.String"/>
@@ -240,7 +241,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
-					<text><![CDATA[Settlement Amout]]></text>
+					<text><![CDATA[Settlement Amount]]></text>
 				</staticText>
 				<staticText>
 					<reportElement x="761" y="15" width="85" height="30" uuid="3270d033-a778-4269-8923-379abedcc4aa"/>
@@ -290,7 +291,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
-					<text><![CDATA[Principal Amout]]></text>
+					<text><![CDATA[Principal Amount]]></text>
 				</staticText>
 			</band>
 		</groupHeader>
