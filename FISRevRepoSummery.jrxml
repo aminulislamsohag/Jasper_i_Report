@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FISRevRepoSummery" pageWidth="950" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="910" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryWithPageHeaderAndFooter="true" uuid="26792ac5-63d2-4d74-ba2b-18599925e7ef">
-	<property name="ireport.zoom" value="1.2100000000000195"/>
+	<property name="ireport.zoom" value="1.000000000000017"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<parameter name="HeaderParam" class="java.util.Map"/>
+	<parameter name="HeaderParam" class="java.util.Map" isForPrompting="false"/>
 	<parameter name="NILMSG" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{HeaderParam}.get( "NILMSG" )]]></defaultValueExpression>
 	</parameter>
@@ -13,16 +13,16 @@
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["\\"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="Query" class="java.lang.String"/>
+	<parameter name="Query" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="FROM_DATE" class="java.lang.String">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<parameter name="TO_DATE" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT REPO.DEAL_ID,
+       D.SECURITY_CODE,
        REPO.VALUE_DATE AS REVERSE_REPO_DATE,
        REPO.MATURITY_DATE AS SECOND_LEG_DATE,
-       D.SECURITY_CODE,
        D.DEAL_FACE_VALUE,
        D.REPO_RETURN AS REPORATE,
        D.REPO_TENOR,
@@ -43,7 +43,8 @@
    AND REPO.DEAL_STATUS IN ('BO_AUTHORIZED ')
    AND D.DEAL_STATUS IN ('DEAL_COMPLETED ')
   AND TRUNC(REPO.VALUE_DATE) BETWEEN
-       TRUNC(TO_DATE($P{FROM_DATE}, ' DD / MM / YY '), ' YY ') AND $P{TO_DATE}
+       TRUNC(TO_DATE($P{FROM_DATE}, ' DD / MM / YY '), ' YY ')
+     AND $P{TO_DATE}
  ORDER BY REPO.VALUE_DATE]]>
 	</queryString>
 	<field name="DEAL_ID" class="java.lang.String"/>
@@ -58,6 +59,7 @@
 	<field name="FIRST_LEG_SET_AMOUNT" class="java.math.BigDecimal"/>
 	<field name="REPO_INTEREST" class="java.math.BigDecimal"/>
 	<field name="SECOND_LEG_SET_AMOUNT" class="java.math.BigDecimal"/>
+	<field name="SECURITY_CODE" class="java.lang.String"/>
 	<variable name="Total_Facevalue" class="java.lang.Double" calculation="Sum">
 		<variableExpression><![CDATA[$F{DEAL_FACE_VALUE}]]></variableExpression>
 	</variable>
@@ -119,21 +121,35 @@
 				<textElement textAlignment="Center" markup="none">
 					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression><![CDATA["REVERSE REPO SUMMARY" + " 20" + $P{FROM_DATE}.substring( 7, 9 )]]></textFieldExpression>
+				<textFieldExpression><![CDATA["REVERSE REPO SUMMARY REPORT"]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="397" y="19" width="56" height="20" uuid="2731d64a-2d1f-45c6-b399-58049529bda0"/>
+				<reportElement x="337" y="18" width="55" height="20" uuid="2731d64a-2d1f-45c6-b399-58049529bda0"/>
 				<textElement>
 					<font isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[AS On:]]></text>
+				<text><![CDATA[From Date:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="453" y="19" width="65" height="20" uuid="8acf6cb0-a256-42d9-b449-924963ffda19"/>
+				<reportElement x="392" y="18" width="59" height="20" uuid="8acf6cb0-a256-42d9-b449-924963ffda19"/>
 				<textElement>
 					<font isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{FROM_DATE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="468" y="18" width="43" height="20" uuid="95ceffd3-32af-48fc-89e6-bfdf0231ede8"/>
+				<textElement>
+					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[To Date:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="510" y="18" width="65" height="20" uuid="bba1fc15-94b6-43f5-b589-c5287b12dd9c"/>
+				<textElement>
+					<font isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TO_DATE}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -160,7 +176,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<text><![CDATA[Reverse Repo Date]]></text>
+				<text><![CDATA[Reverse Repo Date (1st Leg)]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="120" y="0" width="73" height="58" uuid="a6a7a2ef-201d-4c9a-8ba8-f78f363cf1a1"/>
@@ -173,7 +189,7 @@
 				<text><![CDATA[2nd  Leg Settlement Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="320" y="0" width="47" height="58" uuid="91eb94c2-7517-4d16-946a-c30f0c9ea96f"/>
+				<reportElement x="320" y="0" width="60" height="58" uuid="91eb94c2-7517-4d16-946a-c30f0c9ea96f"/>
 				<box>
 					<rightPen lineWidth="1.0"/>
 				</box>
@@ -183,7 +199,7 @@
 				<text><![CDATA[Rev. Repo Rate]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="410" y="0" width="74" height="58" uuid="2e301bec-6784-43c6-8dd9-b1eaeae82d23"/>
+				<reportElement x="433" y="0" width="67" height="58" uuid="2e301bec-6784-43c6-8dd9-b1eaeae82d23"/>
 				<box>
 					<rightPen lineWidth="1.0"/>
 				</box>
@@ -193,7 +209,7 @@
 				<text><![CDATA[Book Value]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="567" y="0" width="85" height="58" uuid="8b5bf3bd-77e7-4db9-9b86-bb8565919b79"/>
+				<reportElement x="579" y="0" width="73" height="58" uuid="8b5bf3bd-77e7-4db9-9b86-bb8565919b79"/>
 				<box>
 					<rightPen lineWidth="1.0"/>
 				</box>
@@ -203,7 +219,7 @@
 				<text><![CDATA[Market Value]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="367" y="0" width="43" height="58" uuid="aae8e592-92e7-4901-a074-f72d1ceff9d2"/>
+				<reportElement x="380" y="0" width="53" height="58" uuid="aae8e592-92e7-4901-a074-f72d1ceff9d2"/>
 				<box>
 					<rightPen lineWidth="1.0"/>
 				</box>
@@ -213,7 +229,7 @@
 				<text><![CDATA[Rev. Repo Tenor (Days)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="484" y="0" width="83" height="58" uuid="f954bbb9-8f48-414e-a26f-143f75fa006b"/>
+				<reportElement x="500" y="0" width="79" height="58" uuid="f954bbb9-8f48-414e-a26f-143f75fa006b"/>
 				<box>
 					<rightPen lineWidth="1.0"/>
 				</box>
@@ -263,7 +279,7 @@
 				<text><![CDATA[Face Value]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="193" y="0" width="60" height="58" uuid="3dfccdc9-836d-4291-91a9-b73b4d09a941"/>
+				<reportElement x="193" y="0" width="62" height="58" uuid="3dfccdc9-836d-4291-91a9-b73b4d09a941"/>
 				<box>
 					<rightPen lineWidth="1.0"/>
 				</box>
@@ -276,6 +292,9 @@
 	</columnHeader>
 	<detail>
 		<band height="20" splitType="Stretch">
+			<rectangle>
+				<reportElement mode="Transparent" x="0" y="0" width="910" height="20" uuid="37cae38a-fa85-4c60-85f1-166b96e9c332"/>
+			</rectangle>
 			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="0" width="60" height="20" uuid="c134b2ab-4c4a-4293-830d-c5332110facd"/>
 				<box>
@@ -321,7 +340,7 @@
 				<textFieldExpression><![CDATA[$F{DEAL_FACE_VALUE}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00&apos; %&apos;">
-				<reportElement x="320" y="0" width="47" height="20" uuid="62b446b5-7f50-4c52-a25a-14aeea8d8ef0"/>
+				<reportElement x="320" y="0" width="60" height="20" uuid="62b446b5-7f50-4c52-a25a-14aeea8d8ef0"/>
 				<box rightPadding="2">
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
@@ -332,7 +351,7 @@
 				<textFieldExpression><![CDATA[$F{REPORATE}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="367" y="0" width="43" height="20" uuid="838eb70e-429d-46bb-8d61-966d691db9bf"/>
+				<reportElement x="380" y="0" width="53" height="20" uuid="838eb70e-429d-46bb-8d61-966d691db9bf"/>
 				<box>
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
@@ -343,7 +362,7 @@
 				<textFieldExpression><![CDATA[$F{REPO_TENOR}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement x="410" y="0" width="74" height="20" uuid="df63bc83-230f-47dd-8f37-942a845dffbc"/>
+				<reportElement x="433" y="0" width="67" height="20" uuid="df63bc83-230f-47dd-8f37-942a845dffbc"/>
 				<box rightPadding="2">
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
@@ -354,7 +373,7 @@
 				<textFieldExpression><![CDATA[$F{BOOK_VALUE}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement x="484" y="0" width="83" height="20" uuid="fbeba412-487e-4958-b1b1-df063dd150e6"/>
+				<reportElement x="500" y="0" width="79" height="20" uuid="fbeba412-487e-4958-b1b1-df063dd150e6"/>
 				<box rightPadding="2">
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
@@ -365,7 +384,7 @@
 				<textFieldExpression><![CDATA[$F{ACCRUED_INTEREST}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement x="567" y="0" width="85" height="20" uuid="e5a852f2-e09c-4f4a-be16-bd35b71eb387"/>
+				<reportElement x="579" y="0" width="73" height="20" uuid="e5a852f2-e09c-4f4a-be16-bd35b71eb387"/>
 				<box rightPadding="2">
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
@@ -410,7 +429,7 @@
 				<textFieldExpression><![CDATA[$F{SECOND_LEG_SET_AMOUNT}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="193" y="0" width="60" height="20" uuid="8cd195f0-9cdf-4f23-9aa8-b256222eab92"/>
+				<reportElement x="193" y="0" width="62" height="20" uuid="8cd195f0-9cdf-4f23-9aa8-b256222eab92"/>
 				<box>
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
@@ -418,7 +437,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{DEAL_ID}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{SECURITY_CODE}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -442,6 +461,9 @@
 	</pageFooter>
 	<summary>
 		<band height="50" splitType="Stretch">
+			<rectangle>
+				<reportElement mode="Transparent" x="0" y="5" width="910" height="20" uuid="bb985aae-422f-45eb-9caa-a9adcef39220"/>
+			</rectangle>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement positionType="FixRelativeToBottom" x="267" y="30" width="376" height="20" uuid="d035e4e0-d274-4600-9268-5b97fd4817c8"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -450,15 +472,16 @@
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}.equals(new Integer(0))?$P{NILMSG}:$P{EORMSG}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="6" width="222" height="20" uuid="2837b155-0387-4c88-bcdb-d29aa886a491"/>
+				<reportElement x="0" y="6" width="193" height="20" uuid="2837b155-0387-4c88-bcdb-d29aa886a491"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<text><![CDATA[Total:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="222" y="6" width="77" height="20" uuid="937b87cb-ee60-4c15-bcb2-4d633aafff62"/>
+				<reportElement stretchType="RelativeToTallestObject" x="193" y="5" width="127" height="20" uuid="937b87cb-ee60-4c15-bcb2-4d633aafff62"/>
 				<box rightPadding="2">
+					<leftPen lineWidth="0.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -494,9 +517,6 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$V{Total_2ndLegSetamnt}]]></textFieldExpression>
 			</textField>
-			<rectangle>
-				<reportElement mode="Transparent" x="0" y="5" width="910" height="20" uuid="bb985aae-422f-45eb-9caa-a9adcef39220"/>
-			</rectangle>
 		</band>
 	</summary>
 </jasperReport>
